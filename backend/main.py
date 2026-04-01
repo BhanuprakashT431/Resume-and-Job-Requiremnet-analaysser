@@ -46,12 +46,13 @@ app = FastAPI(
 # ── CORS ──────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "https://resume-and-job-requiremnet-analayss.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # ── Static files (profile photos) ─────────────────────────────────────────
 app.mount("/static", StaticFiles(directory=_UPLOADS_DIR), name="static")
 
