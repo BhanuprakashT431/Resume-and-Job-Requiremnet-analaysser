@@ -29,18 +29,130 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Smooth fade-in animation class used in Next.js pages */
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
+/* ── Utility animations ──────────────────────────────────────────────── */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.animate-in {
-  animation: fade-in 0.3s ease both;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes line-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+.animate-in         { animation: fade-in      0.3s ease both; }
+.animate-fade-up    { animation: fade-up      0.7s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-from-left  { animation: slide-in-left  0.7s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-from-right { animation: slide-in-right 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-scale-in   { animation: scale-in     0.6s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* Scroll-reveal: elements start hidden; JS adds .in-view to trigger animation */
+[data-animate] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-duration: 0.7s;
+}
+[data-animate="fade-up"]    { transform: translateY(32px); }
+[data-animate="fade-left"]  { transform: translateX(-40px); }
+[data-animate="fade-right"] { transform: translateX(40px); }
+[data-animate="scale"]      { transform: scale(0.9); }
+[data-animate].in-view      { opacity: 1; transform: none; }
+
+
+/* ── Orb / blob drift ───────────────────────────────────────────────── */
+@keyframes orb-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1);      }
+  33%       { transform: translate(40px, -60px) scale(1.08); }
+  66%       { transform: translate(-30px, 40px) scale(0.95); }
+}
+@keyframes orb-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1);      }
+  40%       { transform: translate(-50px, 30px) scale(1.1); }
+  70%       { transform: translate(35px, -45px) scale(0.9); }
+}
+@keyframes orb-drift-3 {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(60px, 50px); }
+}
+.animate-orb-1 { animation: orb-drift-1 18s ease-in-out infinite; }
+.animate-orb-2 { animation: orb-drift-2 24s ease-in-out infinite; }
+.animate-orb-3 { animation: orb-drift-3 30s ease-in-out infinite; }
+
+/* ── Shimmer / gradient sweep ───────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg,
+    rgba(139,92,246,0.6) 0%,
+    rgba(99,210,255,0.9) 40%,
+    rgba(139,92,246,0.6) 100%
+  );
+  background-size: 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Floating card bob ──────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+/* ── Grid-line pulse (login bg) ─────────────────────────────────────── */
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.03; }
+  50%       { opacity: 0.08; }
+}
+.animate-grid { animation: grid-pulse 6s ease-in-out infinite; }
+
+/* ── Staggered fade-up delays ───────────────────────────────────────── */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-900 { animation-delay: 0.9s; }
+
+/* ── Rotating border gradient (login card) ──────────────────────────── */
+@keyframes rotate-border {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Typing cursor blink ────────────────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.animate-blink { animation: blink 1s step-end infinite; }
+
+/* Scrollbar */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+

@@ -28,7 +28,10 @@ export default function UploadZone({ label, sublabel, onUpload, accentColor }: U
       await onUpload(file);
       setState("success");
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Upload failed";
+      const axiosErr = err as { response?: { data?: { detail?: string } }; message?: string };
+      const msg =
+        axiosErr?.response?.data?.detail ??
+        (err instanceof Error ? err.message : "Upload failed. Check the server is running.");
       setErrorMsg(msg);
       setState("error");
     }
@@ -36,9 +39,23 @@ export default function UploadZone({ label, sublabel, onUpload, accentColor }: U
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "application/pdf": [".pdf"], "text/plain": [".txt"] },
+    // Accept both standard and alternative PDF MIME types — browsers on Windows
+    // sometimes report PDFs as application/octet-stream, so we allow that too.
+    accept: {
+      "application/pdf": [".pdf"],
+      "application/x-pdf": [".pdf"],
+      "application/octet-stream": [".pdf"],
+      "text/plain": [".txt"],
+      "text/markdown": [".md"],
+    },
     maxFiles: 1,
     disabled: state === "uploading",
+    // Surface rejection reason to the user
+    onDropRejected: (fileRejections) => {
+      const reason = fileRejections[0]?.errors[0]?.message ?? "File type not supported";
+      setErrorMsg(reason);
+      setState("error");
+    },
   });
 
   const borderColor = isDragActive

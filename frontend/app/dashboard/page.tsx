@@ -88,7 +88,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Back link */}
-            <a href="/" className="inline-block text-sm text-white/30 hover:text-violet-400 transition-colors">
+            <a href="/app" className="inline-block text-sm text-white/30 hover:text-violet-400 transition-colors">
               ← Upload new documents
             </a>
           </>

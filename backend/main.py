@@ -1,63 +1,65 @@
 """
 main.py — FastAPI application entry point.
-
-Starts the AI-Adaptive Onboarding Engine backend.
-Run with:  uvicorn main:app --reload --port 8000
 """
 
 from __future__ import annotations
 import logging
+import os
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers.upload import router as upload_router
+from fastapi.staticfiles import StaticFiles
 
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
+from database import create_tables
+from routers.upload import router as upload_router
+from routers.auth import router as auth_router
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(name)s — %(message)s",
 )
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# Application
-# ---------------------------------------------------------------------------
+# ── Uploads directory (served as /static) ─────────────────────────────────
+_UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(os.path.join(_UPLOADS_DIR, "photos"), exist_ok=True)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Creating database tables…")
+    create_tables()
+    logger.info("Database ready.")
+    yield
+
+
 app = FastAPI(
     title="AI-Adaptive Onboarding Engine",
-    description=(
-        "Backend API for parsing Resumes and Job Descriptions, extracting skills "
-        "via an open-source LLM, and generating a personalized learning roadmap."
-    ),
-    version="0.1.0",
+    description="Backend API for skill parsing, gap analysis, and personalized learning roadmaps.",
+    version="0.2.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
-# ---------------------------------------------------------------------------
-# CORS — allow Next.js dev server and production origin
-# ---------------------------------------------------------------------------
+# ── CORS ──────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ---------------------------------------------------------------------------
-# Routers
-# ---------------------------------------------------------------------------
+# ── Static files (profile photos) ─────────────────────────────────────────
+app.mount("/static", StaticFiles(directory=_UPLOADS_DIR), name="static")
+
+# ── Routers ───────────────────────────────────────────────────────────────
+app.include_router(auth_router)
 app.include_router(upload_router)
 
 
-# ---------------------------------------------------------------------------
-# Health check
-# ---------------------------------------------------------------------------
 @app.get("/health", tags=["system"])
 async def health() -> dict:
-    """Simple liveness probe."""
-    return {"status": "ok", "service": "ai-adaptive-onboarding-engine"}
+    return {"status": "ok", "version": "0.2.0"}
