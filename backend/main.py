@@ -11,9 +11,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from database import create_tables
-from routers.upload import router as upload_router
-from routers.auth import router as auth_router
+from backend.database import create_tables
+from backend.routers.upload import router as upload_router
+from backend.routers.auth import router as auth_router
 
 logging.basicConfig(
     level=logging.INFO,
