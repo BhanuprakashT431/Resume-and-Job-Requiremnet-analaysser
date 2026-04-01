@@ -47,7 +47,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://resume-and-job-requiremnet-analayss.vercel.app"
+        "http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000",
+        "https://resume-and-job-requiremnet-analayss.vercel.app",
+        "https://frontend-ebon-theta-14.vercel.app",
+        "https://frontend-fwhw5l2df-bhanuprakasht431s-projects.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
