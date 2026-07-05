@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Zap, ArrowRight, Lock, Mail, User2, Calendar, GraduationCap, Camera } from "lucide-react";
 import { loginUser, saveSession } from "@/lib/api";
@@ -44,6 +44,17 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-[#080812] flex items-center justify-center px-4" />
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

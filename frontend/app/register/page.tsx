@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Zap, ArrowRight, Lock, Mail, User2, Calendar,
@@ -68,6 +68,19 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [maxDate, setMaxDate] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setMaxDate(new Date().toISOString().split("T")[0]);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-[#080812] flex items-center justify-center px-4 py-12" />
+    );
+  }
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -195,7 +208,7 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Date of Birth" icon={Calendar} id="reg-dob">
                   <input id="reg-dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)}
-                    max={new Date().toISOString().split("T")[0]}
+                    max={maxDate}
                     className={`${inputCls()} [color-scheme:dark]`} />
                 </Field>
                 <Field label="Graduation Type" icon={GraduationCap} id="reg-grad">

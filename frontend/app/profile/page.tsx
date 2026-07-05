@@ -73,8 +73,10 @@ export default function ProfilePage() {
   const [editName, setEditName] = useState("");
   const [editDob, setEditDob] = useState("");
   const [editGrad, setEditGrad] = useState("");
+  const [maxDate, setMaxDate] = useState("");
 
   useEffect(() => {
+    setMaxDate(new Date().toISOString().split("T")[0]);
     getProfile()
       .then((u) => {
         setUser(u);
@@ -276,7 +278,7 @@ export default function ProfilePage() {
             </div>
             {editing ? (
               <input type="date" value={editDob} onChange={(e) => setEditDob(e.target.value)}
-                max={new Date().toISOString().split("T")[0]}
+                max={maxDate}
                 className={`${inputCls} [color-scheme:dark]`} />
             ) : (
               <>
